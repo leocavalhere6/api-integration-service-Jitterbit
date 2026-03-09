@@ -1,0 +1,29 @@
+{
+  "name": "api-integration-service-jitterbit",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leocavalhere6/api-integration-service-Jitterbit.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/leocavalhere6/api-integration-service-Jitterbit/issues"
+  },
+  "homepage": "https://github.com/leocavalhere6/api-integration-service-Jitterbit#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "jest": "^30.2.0",
+    "supertest": "^7.2.2"
+  }
+}
