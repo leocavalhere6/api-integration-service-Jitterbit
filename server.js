@@ -1,3 +1,6 @@
+// Application entry point.
+//Responsible for starting the HTTP server.
+
 const app = require("./src/app");
 
 const PORT = 3000;
