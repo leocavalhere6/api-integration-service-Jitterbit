@@ -2,6 +2,18 @@ const request = require("supertest");
 const app = require("../src/app");
 const db = require("../src/database/connection");
 
+const pool = require("../src/database/connection");
+
+beforeAll(async () => {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS "Order" (
+      id SERIAL PRIMARY KEY,
+      numero_pedido VARCHAR(255),
+      valor_total NUMERIC,
+      data_criacao TIMESTAMP
+    );
+  `);
+});
 describe("Orders API", () => {
   const orderPayload = {
     numeroPedido: `test-order-${Date.now()}`,
