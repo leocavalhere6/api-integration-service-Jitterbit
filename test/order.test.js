@@ -1,19 +1,17 @@
 const request = require("supertest");
 const app = require("../src/app");
-const db = require("../src/database/connection");
 
-const pool = require("../src/database/connection");
+let token;
 
 beforeAll(async () => {
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS "Order" (
-      id SERIAL PRIMARY KEY,
-      numero_pedido VARCHAR(255),
-      valor_total NUMERIC,
-      data_criacao TIMESTAMP
-    );
-  `);
+  const response = await request(app).post("/auth/login").send({
+    username: "admin",
+    password: "1234",
+  });
+
+  token = response.body.token;
 });
+
 describe("Orders API", () => {
   const orderPayload = {
     numeroPedido: `test-order-${Date.now()}`,
@@ -29,12 +27,17 @@ describe("Orders API", () => {
   };
 
   it("should create a new order", async () => {
-    const response = await request(app).post("/order").send(orderPayload);
+    const response = await request(app)
+      .post("/order")
+      .set("Authorization", `Bearer ${token}`)
+      .send(orderPayload);
 
     expect(response.statusCode).toBe(201);
   });
-});
 
-afterAll(async () => {
-  await db.end();
+  it("should return 401 when token is missing", async () => {
+    const response = await request(app).post("/order").send(orderPayload);
+
+    expect(response.statusCode).toBe(401);
+  });
 });
