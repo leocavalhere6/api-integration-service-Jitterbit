@@ -21,15 +21,32 @@ Controller → Service → Repository
 ## Project Structure
 
 ```
-src
- ├── controllers
- ├── services
- ├── repositories
- ├── routes
- ├── database
- └── middlewares
+api-integration-service-jitterbit
+├── package-lock.json
+├── package.json
+├── server.js
+├── src
+│   ├── app.js
+│   ├── config
+│   │   └── connection.js
+│   ├── controllers
+│   │   └── orderController.js
+│   ├── database
+│   │   └── connection.js
+│   ├── middlewares
+│   │   └── errorHandler.js
+│   ├── models
+│   │   └── orderModel.js
+│   ├── repositories
+│   │   └── orderRepository.js
+│   ├── routes
+│   │   └── orderRoutes.js
+│   └── services
+│       └── orderService.js
+└── test
+    ├── app.test.js
+    └── order.test.js
 
-test
 ```
 
 The application follows a layered architecture separating responsibilities between routing, business logic, and data persistence.
