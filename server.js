@@ -1,9 +1,11 @@
-// Application entry point.
-//Responsible for starting the HTTP server.
+/**
+ * Application entry point.
+ * Responsible for starting the HTTP server.
+ */
 
 const app = require("./src/app");
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
