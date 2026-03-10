@@ -8,6 +8,42 @@ Controller → Service → Repository
 
 ---
 
+## Checklist de Avaliação – API de Pedidos
+
+### Funcionalidade mínima
+
+- [x] CRUD completo de pedidos implementado (`POST`, `GET`, `PUT`, `DELETE`)
+- [x] Transformação de JSON de entrada para formato do banco
+- [x] Persistência no PostgreSQL (`Order` e `Items`)
+
+### Código e organização
+
+- [x] Estrutura de pastas clara e modular
+- [x] Código comentado e legível
+- [x] Convenções de nomenclatura seguidas (camelCase e PascalCase)
+
+### Tratamento de erros
+
+- [x] Middleware global de erros (`errorHandler.js`)
+- [x] Mensagens de erro compreensíveis
+- [x] Status HTTP corretos (404, 500, 201, 200, 204)
+
+### Testes
+
+- [x] Testes de integração com Jest + Supertest
+- [x] Todos os testes passando ✅
+
+### Segurança e documentação
+
+- [x] Autenticação JWT implementada
+- [x] Swagger disponível em `/api-docs` para testar endpoints
+
+### GitHub
+
+- [x] Repositório público com commits claros e organizados
+
+---
+
 ## Tech Stack
 
 - Node.js
