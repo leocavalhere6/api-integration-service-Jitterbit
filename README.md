@@ -1,13 +1,27 @@
 # API Integration Service – Jitterbit
 
-This project implements a simple **Order API** that receives orders and stores them in a **PostgreSQL database**.
+Backend service that exposes a REST API to manage orders and items, persisting data in a PostgreSQL database.
 
-The service exposes REST endpoints to create and retrieve orders, following a layered architecture:
+The application follows a layered architecture to separate responsibilities and keep the code maintainable.
+
+Architecture:
 
 Controller → Service → Repository
 
 ---
 
+<<<<<<< HEAD
+## Overview
+
+This project implements an Order API that:
+
+• Receives orders via REST endpoints
+• Transforms incoming JSON into the internal model
+• Persists data in PostgreSQL
+• Secures endpoints with JWT authentication
+• Provides interactive documentation via Swagger
+• Includes automated integration tests
+=======
 ## Checklist de Avaliação – API de Pedidos
 
 ### Funcionalidade mínima
@@ -41,6 +55,7 @@ Controller → Service → Repository
 ### GitHub
 
 - [x] Repositório público com commits claros e organizados
+>>>>>>> f557e171e34cd36935e936946741863f68a38ee9
 
 ---
 
@@ -50,7 +65,47 @@ Controller → Service → Repository
 - Express
 - PostgreSQL
 - Docker & Docker Compose
-- Jest + Supertest (integration tests)
+- Jest
+- Supertest
+- Swagger
+
+---
+
+## Quick Start (30 seconds)
+
+Clone the repository and start the project locally:
+
+```bash
+git clone <repository-url>
+cd api-integration-service-jitterbit
+```
+
+Start the database:
+
+```bash
+cp .env.develop .env
+docker compose up -d
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Run the API:
+
+```bash
+node server.js
+```
+
+The server will start at:
+
+http://localhost:3000
+
+Swagger documentation:
+
+http://localhost:3000/api-docs
 
 ---
 
@@ -64,73 +119,59 @@ api-integration-service-jitterbit
 ├── src
 │   ├── app.js
 │   ├── config
-│   │   └── connection.js
+│   │   ├── connection.js
+│   │   └── swagger.js
 │   ├── controllers
 │   │   └── orderController.js
-│   ├── database
-│   │   └── connection.js
+│   ├── errors
+│   │   └── AppError.js
 │   ├── middlewares
-│   │   └── errorHandler.js
+│   │   ├── authMiddleware.js
+│   │   ├── errorHandler.js
+│   │   └── validateOrder.js
 │   ├── models
 │   │   └── orderModel.js
 │   ├── repositories
 │   │   └── orderRepository.js
 │   ├── routes
+│   │   ├── authRoutes.js
 │   │   └── orderRoutes.js
-│   └── services
-│       └── orderService.js
+│   ├── services
+│   │   └── orderService.js
+│   └── utils
+│       └── orderMapper.js
 └── test
     ├── app.test.js
+    ├── auth.test.js
+    ├── order.integration.test.js
     └── order.test.js
-
 ```
 
-The application follows a layered architecture separating responsibilities between routing, business logic, and data persistence.
-
----
-
-## Running the Project
-
-### 1. Start the database
-
-```bash
-cp .env.develop .env
-docker compose up -d
-```
-
-This will start a PostgreSQL container used by the application.
-
----
-
-### 2. Install dependencies
-
-```bash
-npm install
-```
-
----
-
-### 3. Run the API
-
-```bash
-node server.js
-```
-
-The server will start at:
-
-```
-http://localhost:3000
-```
+The structure separates routing, business logic, and data persistence into different layers.
 
 ---
 
 ## Running Tests
 
+Run integration tests with:
+
 ```bash
 npm test
 ```
 
-The tests use **Jest** and **Supertest** to validate API endpoints.
+Tests are implemented using Jest and Supertest.
+
+---
+
+## API Documentation
+
+Interactive API documentation is available through Swagger.
+
+After starting the server, open:
+
+http://localhost:3000/api-docs
+
+Swagger allows testing endpoints directly from the browser.
 
 ---
 
@@ -141,6 +182,7 @@ Create a new order:
 ```bash
 curl -X POST http://localhost:3000/order \
 -H "Content-Type: application/json" \
+-H "Authorization: Bearer <TOKEN>" \
 -d '{
   "numeroPedido": "v10089015vdb-01",
   "valorTotal": 10000,
@@ -176,7 +218,7 @@ Example response:
 
 ## Health Check
 
-You can verify the API is running:
+You can verify if the API is running:
 
 ```
 GET /
@@ -189,3 +231,39 @@ Response:
   "message": "Order API running"
 }
 ```
+
+---
+
+## Evaluation Checklist
+
+### Minimum functionality
+
+- CRUD for orders (`POST`, `GET`, `PUT`, `DELETE`)
+- Input JSON transformation
+- Persistence in PostgreSQL
+
+### Code quality
+
+- Modular folder structure
+- Readable and documented code
+- Naming conventions applied
+
+### Error handling
+
+- Global error handler middleware
+- Meaningful error messages
+- Proper HTTP status codes
+
+### Tests
+
+- Integration tests with Jest + Supertest
+- All tests passing
+
+### Security & documentation
+
+- JWT authentication implemented
+- Swagger documentation available
+
+### Repository
+
+- Clear and organized commits
