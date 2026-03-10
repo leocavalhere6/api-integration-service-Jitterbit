@@ -1,6 +1,5 @@
 /**
- * Order controller.
- * Responsible for handling HTTP requests and responses.
+ * Controller responsible for handling HTTP requests related to orders.
  */
 
 const orderService = require("../services/orderService");
@@ -8,7 +7,11 @@ const orderService = require("../services/orderService");
 exports.createOrder = async (req, res, next) => {
   try {
     const order = await orderService.createOrder(req.body);
-    res.status(201).json(order);
+
+    res.status(201).json({
+      message: "Order created successfully",
+      data: order,
+    });
   } catch (error) {
     next(error);
   }
@@ -16,13 +19,9 @@ exports.createOrder = async (req, res, next) => {
 
 exports.getOrder = async (req, res, next) => {
   try {
-    const order = await orderService.getOrder(req.params.id);
+    const order = await orderService.getOrderById(req.params.id);
 
-    if (!order) {
-      return res.status(404).json({ message: "Order not found" });
-    }
-
-    res.json(order);
+    res.status(200).json(order);
   } catch (error) {
     next(error);
   }
@@ -30,8 +29,9 @@ exports.getOrder = async (req, res, next) => {
 
 exports.listOrders = async (req, res, next) => {
   try {
-    const orders = await orderService.listOrders();
-    res.json(orders);
+    const orders = await orderService.getAllOrders();
+
+    res.status(200).json(orders);
   } catch (error) {
     next(error);
   }
@@ -39,8 +39,12 @@ exports.listOrders = async (req, res, next) => {
 
 exports.updateOrder = async (req, res, next) => {
   try {
-    const updated = await orderService.updateOrder(req.params.id, req.body);
-    res.json(updated);
+    const order = await orderService.updateOrder(req.params.id, req.body);
+
+    res.status(200).json({
+      message: "Order updated successfully",
+      data: order,
+    });
   } catch (error) {
     next(error);
   }
@@ -49,6 +53,7 @@ exports.updateOrder = async (req, res, next) => {
 exports.deleteOrder = async (req, res, next) => {
   try {
     await orderService.deleteOrder(req.params.id);
+
     res.status(204).send();
   } catch (error) {
     next(error);
