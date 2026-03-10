@@ -1,59 +1,74 @@
-const db = require("../database/connection");
+/**
+ * Repository responsible for database operations related to orders.
+ */
 
-exports.create = async (order) => {
-  const { orderId, value, creationDate, items } = order;
+const db = require("../config/connection");
 
-  await db.query(
-    `INSERT INTO "Order" (orderId, value, creationDate)
-     VALUES ($1, $2, $3)`,
-    [orderId, value, creationDate],
-  );
+exports.createOrder = async (order) => {
+  const client = await db.connect();
 
-  for (const item of items) {
-    await db.query(
-      `INSERT INTO Items (orderId, productId, quantity, price)
-       VALUES ($1, $2, $3, $4)`,
-      [orderId, item.productId, item.quantity, item.price],
+  try {
+    await client.query("BEGIN");
+
+    await client.query(
+      `INSERT INTO "Order" (orderId, value, creationDate)
+       VALUES ($1, $2, $3)`,
+      [order.orderId, order.value, order.creationDate],
     );
-  }
 
-  return order;
+    for (const item of order.items) {
+      await client.query(
+        `INSERT INTO Items (orderId, productId, quantity, price)
+         VALUES ($1, $2, $3, $4)`,
+        [order.orderId, item.productId, item.quantity, item.price],
+      );
+    }
+
+    await client.query("COMMIT");
+
+    return order;
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
 };
 
-exports.findById = async (id) => {
-  const order = await db.query(`SELECT * FROM "Order" WHERE orderId = $1`, [
-    id,
+exports.findById = async (orderId) => {
+  const orderResult = await db.query(`SELECT * FROM "Order" WHERE orderId=$1`, [
+    orderId,
   ]);
 
-  if (order.rows.length === 0) return null;
+  if (orderResult.rows.length === 0) return null;
 
-  const items = await db.query(`SELECT * FROM Items WHERE orderId = $1`, [id]);
+  const itemsResult = await db.query(`SELECT * FROM Items WHERE orderId=$1`, [
+    orderId,
+  ]);
 
   return {
-    ...order.rows[0],
-    items: items.rows,
+    ...orderResult.rows[0],
+    items: itemsResult.rows,
   };
 };
 
-exports.findAll = async () => {
+exports.findAllOrders = async () => {
   const result = await db.query(`SELECT * FROM "Order"`);
   return result.rows;
 };
 
-exports.update = async (id, order) => {
-  const { value, creationDate } = order;
-
+exports.updateOrder = async (orderId, order) => {
   await db.query(
     `UPDATE "Order"
      SET value=$1, creationDate=$2
      WHERE orderId=$3`,
-    [value, creationDate, id],
+    [order.value, order.creationDate, orderId],
   );
 
   return order;
 };
 
-exports.remove = async (id) => {
-  await db.query(`DELETE FROM Items WHERE orderId=$1`, [id]);
-  await db.query(`DELETE FROM "Order" WHERE orderId=$1`, [id]);
+exports.deleteOrder = async (orderId) => {
+  await db.query(`DELETE FROM Items WHERE orderId=$1`, [orderId]);
+  await db.query(`DELETE FROM "Order" WHERE orderId=$1`, [orderId]);
 };

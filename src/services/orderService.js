@@ -1,43 +1,55 @@
 /**
- * Order service layer.
- * Contains business logic and data transformation.
+ * Service responsible for business logic related to orders.
  */
 
 const orderRepository = require("../repositories/orderRepository");
+const mapExternalOrderToInternal = require("../utils/orderMapper");
+const AppError = require("../errors/AppError");
 
-//Transform input JSON into database format.
+exports.createOrder = async (orderPayload) => {
+  const mappedOrder = mapExternalOrderToInternal(orderPayload);
 
-function mapOrderData(input) {
-  return {
-    orderId: input.numeroPedido,
-    value: input.valorTotal,
-    creationDate: new Date(input.dataCriacao),
-    items: input.items.map((item) => ({
-      productId: Number(item.idItem),
-      quantity: item.quantidadeItem,
-      price: item.valorItem,
-    })),
-  };
-}
+  const existingOrder = await orderRepository.findById(mappedOrder.orderId);
 
-exports.createOrder = async (data) => {
-  const mappedOrder = mapOrderData(data);
-  return orderRepository.create(mappedOrder);
+  if (existingOrder) {
+    throw new AppError("Order already exists", 409);
+  }
+
+  return orderRepository.createOrder(mappedOrder);
 };
 
-exports.getOrder = async (id) => {
-  return orderRepository.findById(id);
+exports.getOrderById = async (orderId) => {
+  const order = await orderRepository.findById(orderId);
+
+  if (!order) {
+    throw new AppError("Order not found", 404);
+  }
+
+  return order;
 };
 
-exports.listOrders = async () => {
-  return orderRepository.findAll();
+exports.getAllOrders = async () => {
+  return orderRepository.findAllOrders();
 };
 
-exports.updateOrder = async (id, data) => {
-  const mappedOrder = mapOrderData(data);
-  return orderRepository.update(id, mappedOrder);
+exports.updateOrder = async (orderId, orderPayload) => {
+  const mappedOrder = mapExternalOrderToInternal(orderPayload);
+
+  const order = await orderRepository.findById(orderId);
+
+  if (!order) {
+    throw new AppError("Order not found", 404);
+  }
+
+  return orderRepository.updateOrder(orderId, mappedOrder);
 };
 
-exports.deleteOrder = async (id) => {
-  return orderRepository.remove(id);
+exports.deleteOrder = async (orderId) => {
+  const order = await orderRepository.findById(orderId);
+
+  if (!order) {
+    throw new AppError("Order not found", 404);
+  }
+
+  return orderRepository.deleteOrder(orderId);
 };
