@@ -41,6 +41,7 @@ The application follows a layered architecture separating responsibilities betwe
 ### 1. Start the database
 
 ```bash
+cp .env.develop .env
 docker compose up -d
 ```
 
