@@ -10,7 +10,6 @@ Controller → Service → Repository
 
 ---
 
-<<<<<<< HEAD
 ## Overview
 
 This project implements an Order API that:
@@ -21,7 +20,7 @@ This project implements an Order API that:
 • Secures endpoints with JWT authentication
 • Provides interactive documentation via Swagger
 • Includes automated integration tests
-=======
+
 ## Checklist de Avaliação – API de Pedidos
 
 ### Funcionalidade mínima
@@ -55,7 +54,6 @@ This project implements an Order API that:
 ### GitHub
 
 - [x] Repositório público com commits claros e organizados
->>>>>>> f557e171e34cd36935e936946741863f68a38ee9
 
 ---
 
