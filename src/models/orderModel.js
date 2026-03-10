@@ -1,5 +1,7 @@
-// Order domain model.
-// Represents the structure of an order.
+/**
+ * Order domain model.
+ * Represents the structure of an order entity.
+ */
 
 class Order {
   constructor(orderId, value, creationDate, items) {
