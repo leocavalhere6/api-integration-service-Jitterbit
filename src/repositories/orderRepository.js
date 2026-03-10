@@ -1,39 +1,59 @@
-//Repository responsible for data persistence.
-//In this initial version we use in-memory storage.
-
-const orders = [];
+const db = require("../database/connection");
 
 exports.create = async (order) => {
-  orders.push(order);
+  const { orderId, value, creationDate, items } = order;
+
+  await db.query(
+    `INSERT INTO "Order" (orderId, value, creationDate)
+     VALUES ($1, $2, $3)`,
+    [orderId, value, creationDate],
+  );
+
+  for (const item of items) {
+    await db.query(
+      `INSERT INTO Items (orderId, productId, quantity, price)
+       VALUES ($1, $2, $3, $4)`,
+      [orderId, item.productId, item.quantity, item.price],
+    );
+  }
+
   return order;
 };
 
 exports.findById = async (id) => {
-  return orders.find((o) => o.orderId === id);
+  const order = await db.query(`SELECT * FROM "Order" WHERE orderId = $1`, [
+    id,
+  ]);
+
+  if (order.rows.length === 0) return null;
+
+  const items = await db.query(`SELECT * FROM Items WHERE orderId = $1`, [id]);
+
+  return {
+    ...order.rows[0],
+    items: items.rows,
+  };
 };
 
 exports.findAll = async () => {
-  return orders;
+  const result = await db.query(`SELECT * FROM "Order"`);
+  return result.rows;
 };
 
-exports.update = async (id, updatedOrder) => {
-  const index = orders.findIndex((o) => o.orderId === id);
+exports.update = async (id, order) => {
+  const { value, creationDate } = order;
 
-  if (index === -1) {
-    throw new Error("Order not found");
-  }
+  await db.query(
+    `UPDATE "Order"
+     SET value=$1, creationDate=$2
+     WHERE orderId=$3`,
+    [value, creationDate, id],
+  );
 
-  orders[index] = updatedOrder;
-
-  return updatedOrder;
+  return order;
 };
 
 exports.remove = async (id) => {
-  const index = orders.findIndex((o) => o.orderId === id);
-
-  if (index === -1) {
-    throw new Error("Order not found");
-  }
-
-  orders.splice(index, 1);
+  await db.query(`DELETE FROM Items WHERE orderId=$1`, [id]);
+  await db.query(`DELETE FROM "Order" WHERE orderId=$1`, [id]);
 };
